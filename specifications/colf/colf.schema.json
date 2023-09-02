@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "consolidated-logs.schema.json",
+  "title": "Consolidated Owl Logs",
+  "description": "Consolidation of data from Owl logs to make data processing, analysis, and visualization easier.",
+  "type": "object",
+  "properties": {
+    "version": {
+      "description": "The current file format version in semantic versioning.",
+      "type": "string",
+      "pattern": "^\\d+.\\d+.\\d+$"
+    },
+
+    "dictionaries": {
+      "description": "Contains dictionaries to hold repeating values and reduce redundant data.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Unique name of the dictionary.",
+            "type": "string",
+            "enum": ["windows.path", "windows.title"]
+          },
+          "set": {
+            "description": "Set of commonly occuring values.",
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "entries": {
+      "description": "Data entries.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "time": {
+            "description": "UNIX timestamp of when the data was captured.",
+            "type": "number"
+          },
+          "durationSinceLastInput": {
+            "type": "number"
+          },
+
+          "windows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "path#": {
+                  "type": "number"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "title#": {
+                  "type": "number"
+                },
+                "isActive": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        },
+        "required": ["time"]
+      },
+      "uniqueItems": true
+    }
+  },
+
+  "required": ["version", "dictionaries", "entries"]
+}

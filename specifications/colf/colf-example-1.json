@@ -1,0 +1,25 @@
+{
+  "version": "0.0.0",
+  "dictionaries": [
+    {
+      "name": "windows.path",
+      "set": ["a/b/c", "c/d/e"]
+    },
+    {
+      "name": "windows.title",
+      "set": ["Chrome", "VS Code"]
+    }
+  ],
+  "entries": [
+    {
+      "time": 1676257718,
+      "windows": [
+        {
+          "path": 0,
+          "title": 0,
+          "isActive": true
+        }
+      ]
+    }
+  ]
+}
