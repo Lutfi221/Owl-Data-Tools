@@ -11,7 +11,7 @@ T = TypeVar("T")
 """
 
 
-class DataView(Generic[T]):
+class RangeView(Generic[T]):
     """Readonly view of a list of things with type `T`.
 
     Dataview helps with passing long subsections of a very long list
@@ -70,7 +70,7 @@ class Entry(ABC):
         pass
 
     @abstractmethod
-    def get_windows_view(self) -> DataView[Window]:
+    def get_windows_view(self) -> RangeView[Window]:
         """Get a readonly data view of the windows contained in the entry."""
         pass
 

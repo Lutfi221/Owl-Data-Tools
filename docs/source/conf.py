@@ -55,5 +55,9 @@ napoleon_use_ivar = False
 napoleon_use_param = True
 napoleon_use_rtype = True
 
+# controls whether functions documented by the autofunction directive
+# appear with their full module names
+add_module_names = False
+
 # Autodoc settings
 autodoc_typehints = "signature"
