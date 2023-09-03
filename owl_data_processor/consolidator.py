@@ -2,9 +2,32 @@
 """
 
 from __future__ import annotations
+from bisect import bisect_left, bisect_right
 
 from typing import Optional
-from .types import EntryData, WindowData
+from .types import DataView, Entry, EntryData, WindowData
+
+
+class ConsolidatedOwlLogs:
+    _entries: list[Entry]
+    _paths: list[str]
+    _titles: list[str]
+
+    def __init__(self, entries: list[Entry], paths: list[str], titles: list[str]):
+        self._entries = entries
+        self._paths = paths
+        self._titles = titles
+
+    def get_size(self) -> int:
+        return len(self._entries)
+
+    def get_entries_view(self, start_time: int, end_time: int) -> DataView[Entry]:
+        start_i = bisect_left(
+            self._entries, start_time, key=lambda x: x.get_timestamp()
+        )
+        end_i = bisect_right(self._entries, end_time, key=lambda x: x.get_timestamp())
+
+        return DataView(start_i, start_i - end_i, self._entries)
 
 
 class ConsolidatorDictionary:
@@ -81,6 +104,8 @@ class ConsolidatorDictionary:
 
 
 class Consolidator:
+    """Class used to consolidate multiple entries into a unified object."""
+
     _path_cd: ConsolidatorDictionary
     _title_cd: ConsolidatorDictionary
 

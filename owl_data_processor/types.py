@@ -11,19 +11,46 @@ T = TypeVar("T")
 """
 
 
-class DataView(Generic[T], ABC):
-    """Interface for a read-only view of a list of things
-    with type `T`."""
+class DataView(Generic[T]):
+    """Readonly view of a list of things with type `T`.
 
-    @abstractmethod
+    Dataview helps with passing long subsections of a very long list
+    to other functions or classes without unnecessary duplication
+    of the data in the list. It is useful when you want to view
+    or process only a subsection of a long list.
+    >>>
+    """
+
+    _items: list[T]
+    _start_i: int
+    _len: int
+
+    def __init__(self, start_i: int, n_items: int, items: list[T]):
+        """Create a dataview from the list of items.
+
+        Parameters
+        ----------
+        start_i : int
+            Index where the dataview begins.
+        n_items : int
+            Number of items the dataview will contain.
+        items : list[T]
+            List of items.
+        """
+        self._items = items
+        self._start_i = start_i
+        self._len = n_items
+
     def __getitem__(self, index: int) -> T:
         """Get item."""
-        pass
+        if index < 0 or index >= self._len:
+            raise IndexError(f"DataView index out of range.\n" f"index={index}")
 
-    @abstractmethod
+        return self._items[self._start_i + index]
+
     def __len__(self) -> int:
         """Get the number of items."""
-        pass
+        return self._len
 
 
 class Entry(ABC):
