@@ -57,40 +57,39 @@ class Entry(ABC):
     @property
     @abstractmethod
     def timestamp(self) -> int:
-        """Get timestamp when the entry was recorded."""
+        """Timestamp when the entry was recorded."""
 
     @property
     @abstractmethod
     def is_user_afk(self) -> bool:
-        """Find out if the user is away from keyboard."""
+        """If the user is away from keyboard."""
 
     @property
     @abstractmethod
     def get_duration_since_last_input(self) -> Optional[int]:
-        """Get duration since last user input."""
+        """Duration since last user input."""
 
     @property
     @abstractmethod
     def get_windows_view(self) -> RangeView[Window]:
-        """Get a readonly data view of the windows contained in the entry."""
+        """Readonly range view of the windows contained in the entry."""
 
 
 class Window(ABC):
     @property
     @abstractmethod
     def path(self) -> str:
-        """Get the program path that owns the window."""
-        pass
+        """Program path that owns the window."""
 
     @property
     @abstractmethod
     def title(self) -> str:
-        """Get the title of the window."""
+        """Title of the window."""
 
     @property
     @abstractmethod
     def is_active(self) -> bool:
-        """Find out if the user is currently active on the window."""
+        """If the user is currently active on the window."""
 
 
 class WindowData(TypedDict):
