@@ -5,4 +5,4 @@ Reference
    :maxdepth: 2
    
    reference/types
-   reference/consolidator
+   reference/consolidation

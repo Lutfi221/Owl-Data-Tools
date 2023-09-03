@@ -1,6 +1,6 @@
 import argparse
 
-from .consolidator import ConsolidatorDictionary
+from .consolidation import Dictionary
 
 
 def main():
@@ -20,7 +20,7 @@ def main():
     )
     args = parser.parse_args()
 
-    limb_dict = ConsolidatorDictionary()
+    limb_dict = Dictionary()
     limbs = []
     limbs.append(limb_dict.use_value("head"))
     limbs.append(limb_dict.use_value("arm"))
