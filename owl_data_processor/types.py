@@ -54,42 +54,59 @@ class RangeView(Generic[T]):
 
 
 class Entry(ABC):
+    def __init__(
+        self,
+        timestamp: int,
+        windows_view: RangeView[Window] = [],
+        duration_since_last_input=None,
+        is_user_afk=False,
+    ):
+        self._timestamp = timestamp
+        self._windows_view = windows_view
+        self._duration_since_last_input = duration_since_last_input
+        self._is_user_afk = is_user_afk
+
     @property
-    @abstractmethod
     def timestamp(self) -> int:
         """Timestamp when the entry was recorded."""
+        return self._timestamp
 
     @property
-    @abstractmethod
     def is_user_afk(self) -> bool:
         """If the user is away from keyboard."""
+        return self._is_user_afk
 
     @property
-    @abstractmethod
     def duration_since_last_input(self) -> Optional[int]:
         """Duration since last user input."""
+        return self._duration_since_last_input
 
     @property
-    @abstractmethod
     def windows_view(self) -> RangeView[Window]:
         """Readonly range view of the windows contained in the entry."""
+        return self._windows_view
 
 
 class Window(ABC):
+    def __init__(self, path, title, is_active=False):
+        self._path = path
+        self._title = title
+        self._is_active = is_active
+
     @property
-    @abstractmethod
     def path(self) -> str:
         """Program path that owns the window."""
+        return self._path
 
     @property
-    @abstractmethod
     def title(self) -> str:
         """Title of the window."""
+        return self._title
 
     @property
-    @abstractmethod
     def is_active(self) -> bool:
         """If the user is currently active on the window."""
+        return self._is_active
 
 
 class WindowData(TypedDict):

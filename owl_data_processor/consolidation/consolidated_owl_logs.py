@@ -46,12 +46,10 @@ class ConsolidatedOwlLogs:
         DataView[Entry]
             Readonly entries dataview.
         """
-        start_i = bisect_left(
-            self._entries, start_time, key=lambda x: x.get_timestamp()
-        )
-        end_i = bisect_right(self._entries, end_time, key=lambda x: x.get_timestamp())
+        start_i = bisect_left(self._entries, start_time, key=lambda x: x.timestamp)
+        end_i = bisect_right(self._entries, end_time, key=lambda x: x.timestamp) - 1
 
-        return RangeView(start_i, start_i - end_i, self._entries)
+        return RangeView(start_i, end_i - start_i + 1, self._entries)
 
     def get_time_range(self) -> tuple[int, int]:
         """Get the time range of the entries.
@@ -61,6 +59,6 @@ class ConsolidatedOwlLogs:
         tuple[int, int]
             Earliest log timestamp, and latest log timestamp.
         """
-        earliest = self._entries[0].get_timestamp()
-        latest = self._entries[-1].get_timestamp()
+        earliest = self._entries[0].timestamp
+        latest = self._entries[-1].timestamp
         return (earliest, latest)

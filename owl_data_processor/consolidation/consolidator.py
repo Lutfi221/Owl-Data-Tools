@@ -2,12 +2,13 @@
 """
 
 from __future__ import annotations
-
 from typing import Optional
 
-from .dictionary import Dictionary
+from owl_data_processor.types import RangeView, Window
 
-from ..types import EntryData, WindowData
+from .consolidated_owl_logs import ConsolidatedOwlLogs
+from .dictionary import Dictionary
+from ..types import Entry, EntryData, Window, WindowData
 
 
 class Consolidator:
@@ -33,9 +34,60 @@ class Consolidator:
         """
         self._entries.append(_Entry(entry, self._path_cd, self._title_cd))
 
-    def generate_col(self):
+    def generate_col(self) -> ConsolidatedOwlLogs:
         """Generate a consolidated owl logs object."""
-        pass
+        paths = self._path_cd.generate_values_list()
+        titles = self._title_cd.generate_values_list()
+        entries: list[Entry] = [_EntryView(x, paths, titles) for x in self._entries]
+
+        return ConsolidatedOwlLogs(entries, paths, titles)
+
+
+class _WindowView(Window):
+    _window: _Window
+    _paths: list[str]
+    _titles: list[str]
+
+    __slots__ = ("_window", "_paths", "_titles")
+
+    def __init__(self, window: _Window, paths: list[str], titles: list[str]):
+        self._window = window
+        self._paths = paths
+        self._titles = titles
+
+    @property
+    def path(self) -> str:
+        return self._paths[self._window.path_i]
+
+    @property
+    def title(self) -> str:
+        return self._titles[self._window.title_i]
+
+    @property
+    def is_active(self) -> bool:
+        return self._window.is_active
+
+
+class _EntryView(Entry):
+    _entry: _Entry
+    _paths: list[str]
+    _titles: list[str]
+
+    __slots__ = ("_entry", "_paths", "_titles")
+
+    def __init__(self, entry: _Entry, paths: list[str], titles: list[str]):
+        self._entry = entry
+        self._paths = paths
+        self._titles = titles
+
+    def timestamp(self) -> int:
+        return self._entry.timestamp
+
+    def duration_since_last_input(self) -> int:
+        return self._entry.duration_since_last_input
+
+    def windows_view(self) -> RangeView[Window]:
+        return [_WindowView(x) for x in self._entry.windows]
 
 
 class _Window:
@@ -127,19 +179,32 @@ class _Entry:
 
     def __init__(
         self,
+        timestamp: int,
+        windows: list[_Window],
+        duration_since_last_input: Optional[int],
+    ):
+        """Constructs :class:`_Entry`."""
+        self._timestamp = timestamp
+        self._windows = windows
+        self._duration_since_last_input = duration_since_last_input
+
+    @classmethod
+    def from_entry_data(
+        self,
         entry: EntryData,
         path_cd: Dictionary,
         title_cd: Dictionary,
-    ):
-        """Constructs :class:`_Entry`."""
-        self._windows = []
-
-        self._timestamp = entry["timestamp"]
-        self._duration_since_last_input = entry["durationSinceLastUserInput"]
+    ) -> _Entry:
+        """Creates :class:`_Entry` using :class:`EntryData`."""
+        windows = []
+        timestamp = entry["timestamp"]
+        duration_since_last_input = entry["durationSinceLastUserInput"]
 
         if "windows" in entry:
             for w in entry["windows"]:
-                self._windows.append(_Window(w, path_cd, title_cd))
+                windows.append(_Window.from_window_data(w, path_cd, title_cd))
+
+        return _Entry(timestamp, windows, duration_since_last_input)
 
     @property
     def timestamp(self):
