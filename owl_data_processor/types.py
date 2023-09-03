@@ -66,12 +66,12 @@ class Entry(ABC):
 
     @property
     @abstractmethod
-    def get_duration_since_last_input(self) -> Optional[int]:
+    def duration_since_last_input(self) -> Optional[int]:
         """Duration since last user input."""
 
     @property
     @abstractmethod
-    def get_windows_view(self) -> RangeView[Window]:
+    def windows_view(self) -> RangeView[Window]:
         """Readonly range view of the windows contained in the entry."""
 
 
