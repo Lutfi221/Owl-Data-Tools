@@ -14,7 +14,7 @@ T = TypeVar("T")
 class RangeView(Generic[T]):
     """Readonly view of a list of things with type `T`.
 
-    Dataview helps with passing long subsections of a very long list
+    Rangeview helps with passing long subsections of a very long list
     to other functions or classes without unnecessary duplication
     of the data in the list. It is useful when you want to view
     or process only a subsection of a long list.
@@ -26,14 +26,14 @@ class RangeView(Generic[T]):
     _len: int
 
     def __init__(self, start_i: int, n_items: int, items: list[T]):
-        """Create a dataview from the list of items.
+        """Create a rangeview from the list of items.
 
         Parameters
         ----------
         start_i : int
-            Index where the dataview begins.
+            Index where the rangeview begins.
         n_items : int
-            Number of items the dataview will contain.
+            Number of items the rangeview will contain.
         items : list[T]
             List of items.
         """
@@ -44,7 +44,7 @@ class RangeView(Generic[T]):
     def __getitem__(self, index: int) -> T:
         """Get item."""
         if index < 0 or index >= self._len:
-            raise IndexError(f"DataView index out of range.\n" f"index={index}")
+            raise IndexError(f"Rangeview index out of range.\n" f"index={index}")
 
         return self._items[self._start_i + index]
 
@@ -54,42 +54,43 @@ class RangeView(Generic[T]):
 
 
 class Entry(ABC):
+    @property
     @abstractmethod
-    def get_timestamp(self) -> int:
+    def timestamp(self) -> int:
         """Get timestamp when the entry was recorded."""
-        pass
 
+    @property
     @abstractmethod
-    def get_is_user_afk(self) -> bool:
+    def is_user_afk(self) -> bool:
         """Find out if the user is away from keyboard."""
-        pass
 
+    @property
     @abstractmethod
     def get_duration_since_last_input(self) -> Optional[int]:
         """Get duration since last user input."""
-        pass
 
+    @property
     @abstractmethod
     def get_windows_view(self) -> RangeView[Window]:
         """Get a readonly data view of the windows contained in the entry."""
-        pass
 
 
 class Window(ABC):
+    @property
     @abstractmethod
-    def get_path(self) -> str:
+    def path(self) -> str:
         """Get the program path that owns the window."""
         pass
 
+    @property
     @abstractmethod
-    def get_title(self) -> str:
+    def title(self) -> str:
         """Get the title of the window."""
-        pass
 
+    @property
     @abstractmethod
-    def get_is_active(self) -> bool:
+    def is_active(self) -> bool:
         """Find out if the user is currently active on the window."""
-        pass
 
 
 class WindowData(TypedDict):

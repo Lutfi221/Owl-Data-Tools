@@ -3,7 +3,7 @@ import pytest
 from .types import RangeView
 
 
-class TestDataView:
+class TestRangeView:
     def test_1(self):
         long_list = list(range(0, 10))
         dv = RangeView(3, 4, long_list)
