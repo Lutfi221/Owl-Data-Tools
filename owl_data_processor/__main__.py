@@ -1,7 +1,5 @@
 import argparse
 
-from .consolidation import Dictionary
-
 
 def main():
     parser = argparse.ArgumentParser(
@@ -19,17 +17,6 @@ def main():
         "--output", "-o", action="append", metavar="out", help="Output path."
     )
     args = parser.parse_args()
-
-    limb_dict = Dictionary()
-    limbs = []
-    limbs.append(limb_dict.use_value("head"))
-    limbs.append(limb_dict.use_value("arm"))
-    limbs.append(limb_dict.use_value("arm"))
-    limbs.append(limb_dict.use_value("leg"))
-    limbs.append(limb_dict.use_value("leg"))
-    print(limbs)
-    limbs_value_list = limb_dict.generate_values_list()
-    print(limbs_value_list[limbs[2]])
 
 
 if __name__ == "__main__":
