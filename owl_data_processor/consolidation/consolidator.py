@@ -88,11 +88,11 @@ class _EntryView(Entry):
         return self._entry.timestamp
 
     @property
-    def duration_since_last_input(self) -> int:
+    def duration_since_last_input(self):
         return self._entry.duration_since_last_input
 
     @property
-    def windows_view(self) -> RangeView[Window]:
+    def windows_view(self) -> list[_WindowView]:
         return [_WindowView(x, self._paths, self._titles) for x in self._entry.windows]
 
 
@@ -124,7 +124,7 @@ class _Window:
 
     @classmethod
     def from_window_data(
-        self,
+        cls,
         window: WindowData,
         path_cd: Dictionary,
         title_cd: Dictionary,
@@ -152,7 +152,7 @@ class _Window:
         if "isActive" in window:
             is_active = window["isActive"]
 
-        return _Window(path_i, title_i, is_active)
+        return cls(path_i, title_i, bool(is_active))
 
     @property
     def path_i(self):
@@ -196,7 +196,7 @@ class _Entry:
 
     @classmethod
     def from_entry_data(
-        self,
+        cls,
         entry: EntryData,
         path_cd: Dictionary,
         title_cd: Dictionary,
@@ -209,11 +209,12 @@ class _Entry:
         else:
             duration_since_last_input = None
 
-        if "windows" in entry:
-            for w in entry["windows"]:
+        entry_windows = entry.get("windows")
+        if entry_windows:
+            for w in entry_windows:
                 windows.append(_Window.from_window_data(w, path_cd, title_cd))
 
-        return _Entry(timestamp, windows, duration_since_last_input)
+        return cls(timestamp, windows, duration_since_last_input)
 
     @property
     def timestamp(self):

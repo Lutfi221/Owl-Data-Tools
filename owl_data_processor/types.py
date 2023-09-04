@@ -3,7 +3,7 @@ Commonly used data structures
 """
 
 from __future__ import annotations
-from typing import Generic, Optional, TypeVar, TypedDict
+from typing import Generic, Optional, Sequence, TypeVar, TypedDict
 from abc import ABC, abstractmethod
 
 T = TypeVar("T")
@@ -11,7 +11,7 @@ T = TypeVar("T")
 """
 
 
-class RangeView(Generic[T]):
+class RangeView(Sequence, Generic[T]):
     """Readonly view of a list of things with type `T`.
 
     Rangeview helps with passing long subsections of a very long list
@@ -54,14 +54,19 @@ class RangeView(Generic[T]):
 
 
 class Entry(ABC):
+    _windows_view: Sequence[Window]
+
     def __init__(
         self,
         timestamp: int,
-        windows_view: RangeView[Window] = [],
+        windows_view: Optional[Sequence[Window]] = None,
         duration_since_last_input: Optional[int] = None,
     ):
         self._timestamp = timestamp
-        self._windows_view = windows_view
+        if windows_view:
+            self._windows_view = windows_view
+        else:
+            self._windows_view = []  # type: ignore
         self._duration_since_last_input = duration_since_last_input
 
     @property
@@ -75,7 +80,7 @@ class Entry(ABC):
         return self._duration_since_last_input
 
     @property
-    def windows_view(self) -> RangeView[Window]:
+    def windows_view(self) -> Sequence[Window]:
         """Readonly range view of the windows contained in the entry."""
         return self._windows_view
 

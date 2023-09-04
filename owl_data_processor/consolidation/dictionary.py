@@ -1,3 +1,6 @@
+from typing import Optional
+
+
 class Dictionary:
     """A wrapper of a dictionary intended to store values and
     their index. This class is used to reduce redundant data
@@ -35,7 +38,7 @@ class Dictionary:
         """Constructs :class:`Dictionary`"""
         self._dict = {}
 
-    def use_value(self, value: str) -> int:
+    def use_value(self, value: Optional[str]) -> int:
         """Gets or creates the unique dictionary index
         for `value`.
 
@@ -49,6 +52,9 @@ class Dictionary:
         int
             The dictionary index for `value`
         """
+        if value == None:
+            value = ""
+
         if value in self._dict:
             return self._dict[value]
 

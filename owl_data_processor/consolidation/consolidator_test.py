@@ -12,7 +12,7 @@ TITLES: list[str] = ["Zero", "One", "Two", "Three"]
 
 
 def window_data_mock(i: int, active=False) -> WindowData:
-    w: WindowData = {"path": PATHS[i], "title": TITLES[i]}
+    w: WindowData = {"path": PATHS[i], "title": TITLES[i]}  # type: ignore
     if active:
         w["isActive"] = True
     return w
@@ -20,7 +20,7 @@ def window_data_mock(i: int, active=False) -> WindowData:
 
 def test_1():
     def generate_entries() -> list[EntryData]:
-        return [
+        return [  # type: ignore
             {
                 "timestamp": 0,
                 "windows": [
@@ -53,11 +53,11 @@ def test_1():
 
     for i in range(0, len(entries_original)):
         e = entries_original[i]
-        windows: list[WindowData] = []
+        windows: list[Window] = []
         if "windows" in e:
             windows = [
-                Window(w["path"], w["title"], w.get("isActive", False))
-                for w in e["windows"]
+                Window(w["path"], w["title"], w.get("isActive") or False)
+                for w in e.get("windows") or []
             ]
 
         assert compare_entry(
