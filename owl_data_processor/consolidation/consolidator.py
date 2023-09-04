@@ -23,6 +23,7 @@ class Consolidator:
         """Constructs :class:`Consolidator`"""
         self._path_cd = Dictionary()
         self._title_cd = Dictionary()
+        self._entries = []
 
     def insert_entry(self, entry: EntryData):
         """Insert entry to consolidate.
@@ -32,7 +33,9 @@ class Consolidator:
         entry : EntryData
             Entry data
         """
-        self._entries.append(_Entry(entry, self._path_cd, self._title_cd))
+        self._entries.append(
+            _Entry.from_entry_data(entry, self._path_cd, self._title_cd)
+        )
 
     def generate_col(self) -> ConsolidatedOwlLogs:
         """Generate a consolidated owl logs object."""
@@ -80,14 +83,17 @@ class _EntryView(Entry):
         self._paths = paths
         self._titles = titles
 
+    @property
     def timestamp(self) -> int:
         return self._entry.timestamp
 
+    @property
     def duration_since_last_input(self) -> int:
         return self._entry.duration_since_last_input
 
+    @property
     def windows_view(self) -> RangeView[Window]:
-        return [_WindowView(x) for x in self._entry.windows]
+        return [_WindowView(x, self._paths, self._titles) for x in self._entry.windows]
 
 
 class _Window:
@@ -198,7 +204,10 @@ class _Entry:
         """Creates :class:`_Entry` using :class:`EntryData`."""
         windows = []
         timestamp = entry["timestamp"]
-        duration_since_last_input = entry["durationSinceLastUserInput"]
+        if "durationSinceLastUserInput" in entry:
+            duration_since_last_input = entry["durationSinceLastUserInput"]
+        else:
+            duration_since_last_input = None
 
         if "windows" in entry:
             for w in entry["windows"]:

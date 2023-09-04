@@ -58,23 +58,16 @@ class Entry(ABC):
         self,
         timestamp: int,
         windows_view: RangeView[Window] = [],
-        duration_since_last_input=None,
-        is_user_afk=False,
+        duration_since_last_input: Optional[int] = None,
     ):
         self._timestamp = timestamp
         self._windows_view = windows_view
         self._duration_since_last_input = duration_since_last_input
-        self._is_user_afk = is_user_afk
 
     @property
     def timestamp(self) -> int:
         """Timestamp when the entry was recorded."""
         return self._timestamp
-
-    @property
-    def is_user_afk(self) -> bool:
-        """If the user is away from keyboard."""
-        return self._is_user_afk
 
     @property
     def duration_since_last_input(self) -> Optional[int]:

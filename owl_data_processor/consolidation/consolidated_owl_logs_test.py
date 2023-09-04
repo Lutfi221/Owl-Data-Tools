@@ -1,47 +1,8 @@
 import pytest
+
+from .test_utils import PATHS, TITLES, compare_entry, window_mock
 from .consolidated_owl_logs import ConsolidatedOwlLogs
-from ..types import Entry, Window
-
-
-paths: list[str] = [
-    "/program/0.exe",
-    "/program/1.exe",
-    "/program/2.exe",
-    "/program/3.exe",
-]
-titles: list[str] = ["Zero", "One", "Two", "Three"]
-
-
-def window_mock(i: int, active=False) -> Window:
-    return Window(paths[i], titles[i], active)
-
-
-def compare_entry(a: Entry, b: Entry) -> bool:
-    if not (
-        a.duration_since_last_input == b.duration_since_last_input
-        and a.is_user_afk == b.is_user_afk
-        and a.timestamp == b.timestamp
-        and len(a.windows_view) == len(b.windows_view)
-    ):
-        return False
-
-    for i in range(0, len(a.windows_view)):
-        w_a = a.windows_view[i]
-        w_b = b.windows_view[i]
-        if not (
-            w_a.is_active == w_b.is_active
-            and w_a.path == w_b.path
-            and w_a.title == w_b.title
-        ):
-            return False
-
-    return True
-
-
-def test_compare_entry():
-    assert not compare_entry(
-        Entry(10010, [window_mock(0, True)]), Entry(10010, [window_mock(0, False)])
-    )
+from ..types import Entry
 
 
 def test_1():
@@ -55,7 +16,7 @@ def test_1():
                     window_mock(2),
                 ],
             ),
-            Entry(10020, [], 70, True),
+            Entry(10020, [], 70),
             Entry(
                 10030,
                 [
@@ -66,7 +27,7 @@ def test_1():
             ),
         ]
 
-    col = ConsolidatedOwlLogs(create_mock_entries(), paths, titles)
+    col = ConsolidatedOwlLogs(create_mock_entries(), PATHS, TITLES)
 
     assert col.get_size() == 3
     assert col.get_time_range() == (10010, 10030)
@@ -95,7 +56,7 @@ def test_2_get_entries_view():
 
     entries_original = create_mock_entries()
 
-    col = ConsolidatedOwlLogs(create_mock_entries(), paths, titles)
+    col = ConsolidatedOwlLogs(create_mock_entries(), PATHS, TITLES)
 
     #
     entries_view = col.get_entries_view(10008, 10009)
