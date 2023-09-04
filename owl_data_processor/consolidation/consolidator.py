@@ -2,9 +2,10 @@
 """
 
 from __future__ import annotations
-from typing import Optional
+from typing import Optional, TypedDict
 
-from owl_data_processor.types import RangeView, Window
+from owl_data_processor.types import Window
+from ..version import VERSION
 
 from .consolidated_owl_logs import ConsolidatedOwlLogs
 from .dictionary import Dictionary
@@ -44,6 +45,47 @@ class Consolidator:
         entries: list[Entry] = [_EntryView(x, paths, titles) for x in self._entries]
 
         return ConsolidatedOwlLogs(entries, paths, titles)
+
+    def serialize(self) -> ConsolidatorSerialized:
+        """Generate JSON-serializable dictionary."""
+        obj: ConsolidatorSerialized = {
+            "version": ".".join(map(str, VERSION)),
+            "dictionaries": [],
+            "entries": [],
+        }
+
+        obj["dictionaries"].append(
+            {"name": "windows.path", "set": self._path_cd.generate_values_list()}
+        )
+        obj["dictionaries"].append(
+            {"name": "windows.titles", "set": self._title_cd.generate_values_list()}
+        )
+
+        for entry in self._entries:
+            windows_serialized: list[_CsWindowData] = []
+
+            for window in entry.windows:
+                window_serialized: _CsWindowData = {  # type: ignore
+                    "title": window.title_i,
+                    "path": window.path_i,
+                }
+                if window.is_active:
+                    window_serialized["isActive"] = True
+
+                windows_serialized.append(window_serialized)
+
+            entry_serialized: _CsEntryData = {  # type: ignore
+                "time": entry.timestamp,
+                "windows": windows_serialized,
+            }
+            if entry.duration_since_last_input is not None:
+                entry_serialized[
+                    "durationSinceLastInput"
+                ] = entry.duration_since_last_input
+
+            obj["entries"].append(entry_serialized)
+
+        return obj
 
 
 class _WindowView(Window):
@@ -145,8 +187,8 @@ class _Window:
         -------
         _Window
         """
-        path_i = path_cd.use_value(window["path"])
-        title_i = title_cd.use_value(window["title"])
+        path_i = path_cd.use_value(window.get("path") or "")
+        title_i = title_cd.use_value(window.get("title") or "")
 
         is_active = False
         if "isActive" in window:
@@ -230,3 +272,34 @@ class _Entry:
     def windows(self):
         """Windows captured."""
         return self._windows
+
+
+class ConsolidatorSerialized(TypedDict):
+    """Serialized consolidated owl logs."""
+
+    version: str
+    dictionaries: list[_CsDictionaryData]
+    entries: list[_CsEntryData]
+
+
+class _CsDictionaryData(TypedDict):
+    """Consolidated owl logs dictionary data."""
+
+    name: str
+    set: list[str]
+
+
+class _CsEntryData(TypedDict):
+    """Consolidated owl logs entry data."""
+
+    time: int
+    durationSinceLastInput: Optional[int]
+    windows: Optional[list[_CsWindowData]]
+
+
+class _CsWindowData(TypedDict):
+    """Consolidated owl logs window data."""
+
+    path: int
+    title: int
+    isActive: Optional[bool]

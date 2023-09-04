@@ -1,6 +1,9 @@
+from .consolidator_test_objects import SERIALIZATION_TEST_OBJECTS
 from .test_utils import compare_entry
 from .consolidator import Consolidator
 from ..types import Entry, EntryData, Window, WindowData
+
+from ..version import VERSION
 
 PATHS: list[str] = [
     "/program/0.exe",
@@ -18,7 +21,7 @@ def window_data_mock(i: int, active=False) -> WindowData:
     return w
 
 
-def test_1():
+def test_basic():
     def generate_entries() -> list[EntryData]:
         return [  # type: ignore
             {
@@ -64,3 +67,15 @@ def test_1():
             entries_view[i],
             Entry(e["timestamp"], windows, e.get("durationSinceLastUserInput", None)),
         )
+
+
+def test_serialize():
+    for i, test_obj in enumerate(SERIALIZATION_TEST_OBJECTS):
+        print(f"SERIALIZATION_TEST_OBJECTS[{i}]")
+        consolidator = Consolidator()
+        entries = test_obj["before"]
+
+        for entry in entries:
+            consolidator.insert_entry(entry)
+
+        assert consolidator.serialize() == test_obj["after"]

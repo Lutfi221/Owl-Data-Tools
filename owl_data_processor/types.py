@@ -18,7 +18,6 @@ class RangeView(Sequence, Generic[T]):
     to other functions or classes without unnecessary duplication
     of the data in the list. It is useful when you want to view
     or process only a subsection of a long list.
-    >>>
     """
 
     _items: list[T]

@@ -38,7 +38,7 @@ class Dictionary:
         """Constructs :class:`Dictionary`"""
         self._dict = {}
 
-    def use_value(self, value: Optional[str]) -> int:
+    def use_value(self, value: str) -> int:
         """Gets or creates the unique dictionary index
         for `value`.
 
@@ -52,8 +52,6 @@ class Dictionary:
         int
             The dictionary index for `value`
         """
-        if value == None:
-            value = ""
 
         if value in self._dict:
             return self._dict[value]
