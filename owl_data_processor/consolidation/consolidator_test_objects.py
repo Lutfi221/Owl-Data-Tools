@@ -26,7 +26,7 @@ SERIALIZATION_TEST_OBJECTS: list[SerializationTestObject] = [
         "_description": "Basic test.",
         "before": [  # type: ignore
             {
-                "timestamp": 0,
+                "timestamp": 100000,
                 "windows": [
                     {"path": "/program/0.exe", "title": "Zero"},
                     {"path": "/program/1.exe", "title": "One", "isActive": True},
@@ -34,13 +34,13 @@ SERIALIZATION_TEST_OBJECTS: list[SerializationTestObject] = [
                 ],
             },
             {
-                "timestamp": 1,
+                "timestamp": 100001,
                 "windows": [
                     {"path": "/program/1.exe", "title": "One", "isActive": True},
                     {"path": "/program/2.exe", "title": "Two"},
                 ],
             },
-            {"timestamp": 2, "durationSinceLastUserInput": 60},
+            {"timestamp": 100002, "durationSinceLastUserInput": 60},
         ],
         "after": {
             "version": VERSION_STRING,
@@ -53,7 +53,7 @@ SERIALIZATION_TEST_OBJECTS: list[SerializationTestObject] = [
             ],
             "entries": [
                 {
-                    "time": 0,
+                    "time": 100000,
                     "windows": [
                         {"title": 0, "path": 0},
                         {"title": 1, "path": 1, "isActive": True},
@@ -61,13 +61,13 @@ SERIALIZATION_TEST_OBJECTS: list[SerializationTestObject] = [
                     ],
                 },
                 {
-                    "time": 1,
+                    "time": 100001,
                     "windows": [
                         {"title": 1, "path": 1, "isActive": True},
                         {"title": 2, "path": 2},
                     ],
                 },
-                {"time": 2, "windows": [], "durationSinceLastInput": 60},
+                {"time": 100002, "windows": [], "durationSinceLastInput": 60},
             ],
         },
     },
@@ -76,14 +76,14 @@ SERIALIZATION_TEST_OBJECTS: list[SerializationTestObject] = [
         "are handled properly",
         "before": [
             {
-                "timestamp": 10010,
+                "timestamp": 101000,
                 "windows": [
                     {"path": "C:\\program\\chrome.exe", "title": "Chrome"},
                     {"path": "C:\\program\\firefox.exe", "title": "Firefox"},
                 ],
             },
             {
-                "timestamp": 10020,
+                "timestamp": 101001,
                 "windows": [
                     {"path": "C:\\program\\chrome.exe", "title": "Chrome"},
                     {"path": "C:\\program\\firefox.exe", "title": "Firefox"},
@@ -113,11 +113,11 @@ SERIALIZATION_TEST_OBJECTS: list[SerializationTestObject] = [
             ],
             "entries": [
                 {
-                    "time": 10010,
+                    "time": 101000,
                     "windows": [{"path": 0, "title": 0}, {"path": 1, "title": 1}],
                 },
                 {
-                    "time": 10020,
+                    "time": 101001,
                     "windows": [
                         {"path": 0, "title": 0},
                         {"path": 1, "title": 1},
