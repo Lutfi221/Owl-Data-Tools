@@ -1,5 +1,9 @@
 import argparse
+from pathlib import Path
 import sys
+from typing import Any, Optional, Sequence
+
+from .consolidation.files import consolidator_from_files
 
 
 def create_parser() -> argparse.ArgumentParser:
@@ -13,6 +17,7 @@ def create_parser() -> argparse.ArgumentParser:
         action="append",
         metavar="in",
         help="Path to a '.json.log' or '.COLF' file. Glob pattern is also supported.",
+        required=True,
     )
     parser.add_argument(
         "--output", "-o", action="append", metavar="out", help="Output path."
@@ -20,10 +25,27 @@ def create_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def main():
+def transform_entry(entry: dict[str, Any]):
+    if entry.get("apps") and not entry.get("windows"):
+        entry["windows"] = entry.pop("apps")
+
+    if entry.get("time") and not entry.get("timestamp"):
+        entry["timestamp"] = entry.pop("time")
+
+    if entry.get("durationSinceLastInput") and not entry.get(
+        "durationSinceLastUserInput"
+    ):
+        entry["durationSinceLastUserInput"] = entry.pop("durationSinceLastInput")
+
+
+def main(args: Sequence[str], _test_cwd: Optional[Path] = None):
     parser = create_parser()
-    args = parser.parse_args(sys.argv[1:])
+    parsed = parser.parse_args(args[1:])
+
+    consolidator_from_files(
+        parsed.input, parsed.output, root_dir=_test_cwd, entry_transform=transform_entry
+    )
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv)
