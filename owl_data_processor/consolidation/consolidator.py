@@ -2,7 +2,7 @@
 """
 
 from __future__ import annotations
-from typing import Optional, TypedDict
+from typing import Optional, Sequence, TypedDict
 
 from owl_data_processor.types import Window
 from ..version import VERSION
@@ -37,6 +37,11 @@ class Consolidator:
         self._entries.append(
             _Entry.from_entry_data(entry, self._path_cd, self._title_cd)
         )
+
+    def insert_entries(self, entries: Sequence[EntryData]):
+        """Insert entries to consolidate."""
+        for entry in entries:
+            self.insert_entry(entry)
 
     def generate_col(self) -> ConsolidatedOwlLogs:
         """Generate a consolidated owl logs object."""

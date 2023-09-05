@@ -75,7 +75,6 @@ def test_serialize():
         consolidator = Consolidator()
         entries = test_obj["before"]
 
-        for entry in entries:
-            consolidator.insert_entry(entry)
+        consolidator.insert_entries(entries)
 
         assert consolidator.serialize() == test_obj["after"]
