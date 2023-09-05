@@ -1,11 +1,12 @@
 from .consolidator import Consolidator
-from .dictionary import Dictionary
+from .dictionary import Dictionary, DictionaryMapper
 from .consolidated_owl_logs import ConsolidatedOwlLogs
 from .files import consolidator_from_files
 
 __all__ = [
-    "Consolidator",
     "ConsolidatedOwlLogs",
+    "Consolidator",
     "Dictionary",
+    "DictionaryMapper",
     "consolidator_from_files",
 ]

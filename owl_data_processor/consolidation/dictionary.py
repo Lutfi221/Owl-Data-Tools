@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Sequence
 
 
 class Dictionary:
@@ -74,3 +74,50 @@ class Dictionary:
             values[index] = value
 
         return values
+
+
+class DictionaryMapper:
+    """Class to map the indexes of a dictionary to another dictionary.
+    Useful when combining multiple dictionaries into one.
+    """
+
+    _source_values: Sequence[str]
+    _target_dict: Dictionary
+    _source_to_target: list[Optional[int]]
+
+    def __init__(
+        self, source_dictionary_values: Sequence[str], target_dictionary: Dictionary
+    ):
+        """
+        Parameters
+        ----------
+        source_dictionary_values : Sequence[str]
+            List of values of the source dictionary.
+        target_dictionary : Dictionary
+            Target dictionary.
+        """
+        self._source_values = source_dictionary_values
+        self._target_dict = target_dictionary
+
+        self._source_to_target = [None] * len(self._source_values)
+
+    def source_to_target(self, i_source: int) -> int:
+        """Maps the index for the source dictionary to the target dictionary.
+
+        Parameters
+        ----------
+        i_source : int
+            Index for the value in the source dictionary.
+
+        Returns
+        -------
+        int
+            Index for the value in the target dictionary.
+        """
+        if self._source_to_target[i_source] != None:
+            return self._source_to_target[i_source]  # type: ignore
+
+        self._source_to_target[i_source] = self._target_dict.use_value(
+            self._source_values[i_source]
+        )
+        return self._source_to_target[i_source]  # type: ignore
