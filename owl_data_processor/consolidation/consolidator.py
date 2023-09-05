@@ -63,7 +63,7 @@ class Consolidator:
             {"name": "windows.path", "set": self._path_cd.generate_values_list()}
         )
         obj["dictionaries"].append(
-            {"name": "windows.titles", "set": self._title_cd.generate_values_list()}
+            {"name": "windows.title", "set": self._title_cd.generate_values_list()}
         )
 
         for entry in self._entries:

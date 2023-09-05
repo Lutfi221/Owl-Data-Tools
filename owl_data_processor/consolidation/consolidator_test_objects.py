@@ -49,7 +49,7 @@ SERIALIZATION_TEST_OBJECTS: list[SerializationTestObject] = [
                     "name": "windows.path",
                     "set": ["/program/0.exe", "/program/1.exe", "/program/2.exe"],
                 },
-                {"name": "windows.titles", "set": ["Zero", "One", "Two"]},
+                {"name": "windows.title", "set": ["Zero", "One", "Two"]},
             ],
             "entries": [
                 {
@@ -107,7 +107,7 @@ SERIALIZATION_TEST_OBJECTS: list[SerializationTestObject] = [
                     ],
                 },
                 {
-                    "name": "windows.titles",
+                    "name": "windows.title",
                     "set": ["Chrome", "Firefox", "Task Manager", ""],
                 },
             ],
