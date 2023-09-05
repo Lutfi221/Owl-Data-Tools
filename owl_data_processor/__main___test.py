@@ -41,7 +41,7 @@ def test_basic(tmp_path):
     p_three.write_text("\n".join([json.dumps(entry) for entry in entries_original[2:]]))
 
     consolidator_original = Consolidator()
-    consolidator_original.insert_entries(entries_original)
+    consolidator_original.append_entries(entries_original)
     col_serialized_original = consolidator_original.serialize()
 
     #

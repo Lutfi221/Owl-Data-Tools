@@ -48,7 +48,7 @@ def consolidator_from_files(
                                 entry = json.loads(line)
                                 if entry_transform:
                                     entry_transform(entry)
-                                consolidator.insert_entry(entry)
+                                consolidator.append_entry(entry)
                             except Exception as e:
                                 print(
                                     f"\nException occured while processing `{path}` "

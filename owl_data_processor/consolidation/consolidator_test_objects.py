@@ -4,7 +4,7 @@ from typing import TypedDict
 
 from ..version import VERSION
 
-from .consolidator import ConsolidatorSerialized
+from .consolidator import ConsolidatedOwlLogsSerialized
 from ..types import EntryData
 
 VERSION_STRING = ".".join(map(str, VERSION))
@@ -18,7 +18,7 @@ class SerializationTestObject(TypedDict):
     This is just to help developers to understand the test objects more easier.
     """
     before: list[EntryData]
-    after: ConsolidatorSerialized
+    after: ConsolidatedOwlLogsSerialized
 
 
 SERIALIZATION_TEST_OBJECTS: list[SerializationTestObject] = [

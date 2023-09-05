@@ -45,7 +45,7 @@ def test_basic():
     consolidator = Consolidator()
 
     for entry in generate_entries():
-        consolidator.insert_entry(entry)
+        consolidator.append_entry(entry)
 
     col = consolidator.generate_col()
 
@@ -75,6 +75,6 @@ def test_serialize():
         consolidator = Consolidator()
         entries = test_obj["before"]
 
-        consolidator.insert_entries(entries)
+        consolidator.append_entries(entries)
 
         assert consolidator.serialize() == test_obj["after"]

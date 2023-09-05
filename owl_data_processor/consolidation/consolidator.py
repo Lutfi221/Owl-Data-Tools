@@ -26,8 +26,8 @@ class Consolidator:
         self._title_cd = Dictionary()
         self._entries = []
 
-    def insert_entry(self, entry: EntryData):
-        """Insert entry to consolidate.
+    def append_entry(self, entry: EntryData):
+        """Append and consolidate entry.
 
         Parameters
         ----------
@@ -38,10 +38,10 @@ class Consolidator:
             _Entry.from_entry_data(entry, self._path_cd, self._title_cd)
         )
 
-    def insert_entries(self, entries: Sequence[EntryData]):
-        """Insert entries to consolidate."""
+    def append_entries(self, entries: Sequence[EntryData]):
+        """Append and consolidate entries."""
         for entry in entries:
-            self.insert_entry(entry)
+            self.append_entry(entry)
 
     def generate_col(self) -> ConsolidatedOwlLogs:
         """Generate a consolidated owl logs object."""
@@ -51,9 +51,9 @@ class Consolidator:
 
         return ConsolidatedOwlLogs(entries, paths, titles)
 
-    def serialize(self) -> ConsolidatorSerialized:
+    def serialize(self) -> ConsolidatedOwlLogsSerialized:
         """Generate JSON-serializable dictionary."""
-        obj: ConsolidatorSerialized = {
+        obj: ConsolidatedOwlLogsSerialized = {
             "version": ".".join(map(str, VERSION)),
             "dictionaries": [],
             "entries": [],
@@ -67,10 +67,10 @@ class Consolidator:
         )
 
         for entry in self._entries:
-            windows_serialized: list[_CsWindowData] = []
+            windows_serialized: list[_ColsWindowData] = []
 
             for window in entry.windows:
-                window_serialized: _CsWindowData = {  # type: ignore
+                window_serialized: _ColsWindowData = {  # type: ignore
                     "title": window.title_i,
                     "path": window.path_i,
                 }
@@ -79,7 +79,7 @@ class Consolidator:
 
                 windows_serialized.append(window_serialized)
 
-            entry_serialized: _CsEntryData = {  # type: ignore
+            entry_serialized: _ColsEntryData = {  # type: ignore
                 "time": entry.timestamp,
                 "windows": windows_serialized,
             }
@@ -279,30 +279,30 @@ class _Entry:
         return self._windows
 
 
-class ConsolidatorSerialized(TypedDict):
-    """Serialized consolidated owl logs."""
+class ConsolidatedOwlLogsSerialized(TypedDict):
+    """Serialized consolidated owl logs data."""
 
     version: str
-    dictionaries: list[_CsDictionaryData]
-    entries: list[_CsEntryData]
+    dictionaries: list[_ColsDictionaryData]
+    entries: list[_ColsEntryData]
 
 
-class _CsDictionaryData(TypedDict):
+class _ColsDictionaryData(TypedDict):
     """Consolidated owl logs dictionary data."""
 
     name: str
     set: list[str]
 
 
-class _CsEntryData(TypedDict):
+class _ColsEntryData(TypedDict):
     """Consolidated owl logs entry data."""
 
     time: int
     durationSinceLastInput: Optional[int]
-    windows: Optional[list[_CsWindowData]]
+    windows: Optional[list[_ColsWindowData]]
 
 
-class _CsWindowData(TypedDict):
+class _ColsWindowData(TypedDict):
     """Consolidated owl logs window data."""
 
     path: int
