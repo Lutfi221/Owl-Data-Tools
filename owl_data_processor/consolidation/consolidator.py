@@ -5,10 +5,11 @@ from __future__ import annotations
 from typing import Optional, Sequence, TypedDict
 
 from owl_data_processor.types import Window
+from ..utils import find_first
 from ..version import VERSION
 
 from .consolidated_owl_logs import ConsolidatedOwlLogs
-from .dictionary import Dictionary
+from .dictionary import Dictionary, DictionaryMapper
 from ..types import Entry, EntryData, Window, WindowData
 
 
@@ -91,6 +92,36 @@ class Consolidator:
             obj["entries"].append(entry_serialized)
 
         return obj
+
+    def append_from_serialized(self, serialized: ConsolidatedOwlLogsSerialized):
+        title_set = find_first(  # type: ignore
+            serialized["dictionaries"], lambda elem: elem["name"] == "windows.title"
+        )["set"]
+        path_set = find_first(  # type: ignore
+            serialized["dictionaries"], lambda elem: elem["name"] == "windows.path"
+        )["set"]
+
+        title_dmap = DictionaryMapper(title_set, self._title_cd)
+        path_dmap = DictionaryMapper(path_set, self._path_cd)
+
+        for entry in serialized["entries"]:
+            windows_mapped: list[_Window] = []
+
+            if "windows" in entry:
+                for w in entry["windows"] or []:
+                    windows_mapped.append(
+                        _Window(
+                            path_dmap.source_to_target(w["path"]),
+                            title_dmap.source_to_target(w["title"]),
+                            w.get("isActive") or False,
+                        ),
+                    )
+
+            self._entries.append(
+                _Entry(
+                    entry["time"], windows_mapped, entry.get("durationSinceLastInput")
+                )
+            )
 
 
 class _WindowView(Window):

@@ -77,4 +77,28 @@ def test_serialize():
 
         consolidator.append_entries(entries)
 
-        assert consolidator.serialize() == test_obj["after"]
+        serialized = consolidator.serialize()
+        assert serialized == test_obj["after"]
+
+        # Test append_from_serialized
+        consolidator_revived = Consolidator()
+        consolidator_revived.append_from_serialized(serialized)
+        assert consolidator_revived.serialize() == test_obj["after"]
+
+
+def test_consolidator_merge():
+    """Tests append_from_serialized from multiple serialized consolidator data."""
+
+    consolidator_reference = Consolidator()
+    consolidator_merger = Consolidator()
+
+    for i, test_obj in enumerate(SERIALIZATION_TEST_OBJECTS):
+        print(f"SERIALIZATION_TEST_OBJECTS[{i}]")
+        consolidator_reference.append_entries(test_obj["before"])
+
+        consolidator = Consolidator()
+        consolidator.append_entries(test_obj["before"])
+
+        consolidator_merger.append_from_serialized(consolidator.serialize())
+
+    assert consolidator_merger.serialize() == consolidator_reference.serialize()
