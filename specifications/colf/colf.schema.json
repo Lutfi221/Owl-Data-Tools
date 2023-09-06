@@ -20,7 +20,7 @@
           "name": {
             "description": "Unique name of the dictionary.",
             "type": "string",
-            "enum": ["windows.path", "windows.title"]
+            "enum": ["windows[].path", "windows[].title"]
           },
           "set": {
             "description": "Set of commonly occuring values.",

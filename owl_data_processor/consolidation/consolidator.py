@@ -146,10 +146,10 @@ class Consolidator:
         }
 
         obj["dictionaries"].append(
-            {"name": "windows.path", "set": self._path_cd.generate_values_list()}
+            {"name": "windows[].path", "set": self._path_cd.generate_values_list()}
         )
         obj["dictionaries"].append(
-            {"name": "windows.title", "set": self._title_cd.generate_values_list()}
+            {"name": "windows[].title", "set": self._title_cd.generate_values_list()}
         )
 
         for entry in self._entries:
@@ -187,10 +187,10 @@ class Consolidator:
             Serialized :class:`Consolidator`
         """
         title_set = find_first(  # type: ignore
-            serialized["dictionaries"], lambda elem: elem["name"] == "windows.title"
+            serialized["dictionaries"], lambda elem: elem["name"] == "windows[].title"
         )["set"]
         path_set = find_first(  # type: ignore
-            serialized["dictionaries"], lambda elem: elem["name"] == "windows.path"
+            serialized["dictionaries"], lambda elem: elem["name"] == "windows[].path"
         )["set"]
 
         title_dmap = DictionaryMapper(title_set, self._title_cd)

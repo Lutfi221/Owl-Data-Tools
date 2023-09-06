@@ -2,11 +2,11 @@
   "version": "0.0.0",
   "dictionaries": [
     {
-      "name": "windows.path",
+      "name": "windows[].path",
       "set": ["a/b/c", "c/d/e"]
     },
     {
-      "name": "windows.title",
+      "name": "windows[].title",
       "set": ["Chrome", "VS Code"]
     }
   ],

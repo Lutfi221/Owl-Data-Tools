@@ -46,10 +46,10 @@ SERIALIZATION_TEST_OBJECTS: list[SerializationTestObject] = [
             "version": VERSION_STRING,
             "dictionaries": [
                 {
-                    "name": "windows.path",
+                    "name": "windows[].path",
                     "set": ["/program/0.exe", "/program/1.exe", "/program/2.exe"],
                 },
-                {"name": "windows.title", "set": ["Zero", "One", "Two"]},
+                {"name": "windows[].title", "set": ["Zero", "One", "Two"]},
             ],
             "entries": [
                 {
@@ -98,7 +98,7 @@ SERIALIZATION_TEST_OBJECTS: list[SerializationTestObject] = [
             "version": VERSION_STRING,
             "dictionaries": [
                 {
-                    "name": "windows.path",
+                    "name": "windows[].path",
                     "set": [
                         "C:\\program\\chrome.exe",
                         "C:\\program\\firefox.exe",
@@ -107,7 +107,7 @@ SERIALIZATION_TEST_OBJECTS: list[SerializationTestObject] = [
                     ],
                 },
                 {
-                    "name": "windows.title",
+                    "name": "windows[].title",
                     "set": ["Chrome", "Firefox", "Task Manager", ""],
                 },
             ],
