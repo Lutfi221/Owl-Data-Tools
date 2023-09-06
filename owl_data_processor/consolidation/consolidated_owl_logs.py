@@ -43,8 +43,8 @@ class ConsolidatedOwlLogs:
 
         Returns
         -------
-        DataView[Entry]
-            Readonly entries dataview.
+        RangeView[Entry]
+            Readonly entries RangeView.
         """
         start_i = bisect_left(self._entries, start_time, key=lambda x: x.timestamp)
         end_i = bisect_right(self._entries, end_time, key=lambda x: x.timestamp) - 1
