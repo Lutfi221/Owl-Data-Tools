@@ -220,16 +220,16 @@ class _Window:
         path_cd: Dictionary,
         title_cd: Dictionary,
     ) -> _Window:
-        """Create window structure from :class:`.types.WindowData`,
-        and path and title :class:`ConsolidatorDictionary`.
+        """Create window structure from :class:`WindowData`,
+        and path and title :class:`Dictionary`.
 
         Parameters
         ----------
         window : WindowData
             Window data
-        path_cd : ConsolidatorDictionary
+        path_cd : Dictionary
             Paths dictionary
-        title_cd : ConsolidatorDictionary
+        title_cd : Dictionary
             Titles dictionary
 
         Returns
