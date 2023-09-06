@@ -40,7 +40,13 @@ class Consolidator:
         )
 
     def append_entries(self, entries: Sequence[EntryData]):
-        """Append and consolidate entries."""
+        """Append and consolidate entries.
+
+        Parameters
+        ----------
+        entries : Sequence[EntryData]
+            Entries
+        """
         for entry in entries:
             self.append_entry(entry)
 
@@ -94,6 +100,13 @@ class Consolidator:
         return obj
 
     def append_from_serialized(self, serialized: ConsolidatedOwlLogsSerialized):
+        """Append from serialized data.
+
+        Parameters
+        ----------
+        serialized : ConsolidatedOwlLogsSerialized
+            Serialized :class:`Consolidator`
+        """
         title_set = find_first(  # type: ignore
             serialized["dictionaries"], lambda elem: elem["name"] == "windows.title"
         )["set"]
