@@ -17,7 +17,11 @@ def consolidator_from_files(
     Parameters
     ----------
     file_patterns : Sequence[str]
-        List of file path patterns. Normal paths, and globs are supported.
+        List of file path patterns to '.json.log' or '.json' files.
+        '.json' files will be assumed to contain JSON
+        in the format of :class:`ConsolidatedOwlLogsSerialized`.
+
+        Normal paths, and globs are supported.
     output_paths : Optional[Sequence[str]], optional
         Output file paths, by default None
     root_dir : Optional[Path], optional
@@ -56,7 +60,17 @@ def consolidator_from_files(
                                 )
                                 raise e
 
-                print("(LOADED)")
+                print("(LOADED LOGS)")
+            elif path.suffix == ".json":
+                with open(path, "r", encoding="utf-8") as f:
+                    try:
+                        serialized = json.load(f)
+                        consolidator.append_from_serialized(serialized)
+                    except Exception as e:
+                        print(f"\nException occured while processing `{path}` ")
+                        raise e
+
+                print("(LOADED SERIALIZED COL)")
             else:
                 print("(IGNORED)")
 
