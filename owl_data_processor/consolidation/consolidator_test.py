@@ -1,3 +1,6 @@
+import pytest
+
+from ..exceptions import OwlError
 from .consolidator_test_objects import SERIALIZATION_TEST_OBJECTS
 from .test_utils import compare_entry
 from .consolidator import Consolidator
@@ -102,3 +105,12 @@ def test_consolidator_merge():
         consolidator_merger.append_from_serialized(consolidator.serialize())
 
     assert consolidator_merger.serialize() == consolidator_reference.serialize()
+
+
+def test_unsorted_entry_error():
+    consolidator = Consolidator()
+    consolidator.append_entry({"timestamp": 100})  # type: ignore
+    consolidator.append_entry({"timestamp": 200})  # type: ignore
+
+    with pytest.raises(OwlError):
+        consolidator.append_entry({"timestamp": 50})  # type: ignore

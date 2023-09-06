@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 from typing import Optional, Sequence, TypedDict
+from ..exceptions import OwlError
 
 from owl_data_processor.types import Window
 from ..utils import find_first
@@ -30,17 +31,32 @@ class Consolidator:
     def append_entry(self, entry: EntryData):
         """Append and consolidate entry.
 
+        Entries must be appended in chronological order
+        from earliest to latest.
+
         Parameters
         ----------
         entry : EntryData
             Entry data
         """
+        if len(self._entries) > 0 and self._entries[-1].timestamp > entry["timestamp"]:
+            raise OwlError(
+                "Attempting to append an entry with a timestamp earlier "
+                "than the latest entry in the Consolidator.\n\n"
+                "Make sure the entries you are appending are sorted "
+                "chronologically from earliest to latest.\n\n"
+                f"Offending entry:\n{str(entry)}"
+            )
+
         self._entries.append(
             _Entry.from_entry_data(entry, self._path_cd, self._title_cd)
         )
 
     def append_entries(self, entries: Sequence[EntryData]):
         """Append and consolidate entries.
+
+        Entries must be sorted in chronological order
+        from earliest to latest.
 
         Parameters
         ----------
