@@ -75,18 +75,15 @@ def test_basic():
 def test_serialize():
     for i, test_obj in enumerate(SERIALIZATION_TEST_OBJECTS):
         print(f"SERIALIZATION_TEST_OBJECTS[{i}]")
-        consolidator = Consolidator()
         entries = test_obj["before"]
 
-        consolidator.append_entries(entries)
+        consolidator_1 = Consolidator()
+        consolidator_1.append_entries(entries)
 
-        serialized = consolidator.serialize()
-        assert serialized == test_obj["after"]
+        consolidator_2 = Consolidator()
+        consolidator_2.append_from_serialized(test_obj["after"])
 
-        # Test append_from_serialized
-        consolidator_revived = Consolidator()
-        consolidator_revived.append_from_serialized(serialized)
-        assert consolidator_revived.serialize() == test_obj["after"]
+        assert consolidator_1.serialize() == consolidator_2.serialize()
 
 
 def test_consolidator_merge():
@@ -114,3 +111,12 @@ def test_unsorted_entry_error():
 
     with pytest.raises(OwlError):
         consolidator.append_entry({"timestamp": 50})  # type: ignore
+
+
+def test_empty():
+    consolidator_1 = Consolidator()
+    consolidator_2 = Consolidator()
+
+    consolidator_2.append_from_serialized(consolidator_1.serialize())
+
+    assert consolidator_1.serialize() == consolidator_2.serialize()

@@ -34,9 +34,13 @@ class Dictionary:
     _dict: dict[str, int]
     _size = 0
 
-    def __init__(self):
+    def __init__(self, values: Optional[Sequence[str]] = None):
         """Constructs :class:`Dictionary`"""
         self._dict = {}
+        if values:
+            for value in values:
+                self._dict[value] = self._size
+                self._size += 1
 
     def use_value(self, value: str) -> int:
         """Gets or creates the unique dictionary index
@@ -74,6 +78,11 @@ class Dictionary:
             values[index] = value
 
         return values
+
+    @property
+    def size(self) -> int:
+        """Number of values in the dictionary."""
+        return self._size
 
 
 class DictionaryMapper:

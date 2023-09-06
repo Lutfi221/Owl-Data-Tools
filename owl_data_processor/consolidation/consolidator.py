@@ -21,6 +21,8 @@ class Consolidator:
     _title_cd: Dictionary
 
     _entries: list[_Entry]
+    _optimized = True
+    """If :class:`Consolidator` is in an optimized state."""
 
     def __init__(self):
         """Constructs :class:`Consolidator`"""
@@ -52,6 +54,8 @@ class Consolidator:
             _Entry.from_entry_data(entry, self._path_cd, self._title_cd)
         )
 
+        self._optimized = False
+
     def append_entries(self, entries: Sequence[EntryData]):
         """Append and consolidate entries.
 
@@ -74,8 +78,67 @@ class Consolidator:
 
         return ConsolidatedOwlLogs(entries, paths, titles)
 
-    def serialize(self) -> ConsolidatedOwlLogsSerialized:
-        """Generate JSON-serializable dictionary."""
+    def optimize(self):
+        """Optimize internal consolidated data."""
+        if self._optimized:
+            return
+
+        path_i_to_count: list[int] = [0] * self._path_cd.size
+        title_i_to_count: list[int] = [0] * self._title_cd.size
+
+        for entry in self._entries:
+            for window in entry.windows:
+                path_i_to_count[window.path_i] += 1
+                title_i_to_count[window.title_i] += 1
+
+        path_i_and_counts: list[tuple[int, int]] = [
+            (path_i, count) for path_i, count in enumerate(path_i_to_count)
+        ]
+        title_i_and_counts: list[tuple[int, int]] = [
+            (title_i, count) for title_i, count in enumerate(title_i_to_count)
+        ]
+
+        path_i_and_counts.sort(key=lambda x: x[1], reverse=True)
+        title_i_and_counts.sort(key=lambda x: x[1], reverse=True)
+
+        old_path_i_to_new: list[int] = [0] * len(path_i_and_counts)
+        old_title_i_to_new: list[int] = [0] * len(title_i_and_counts)
+
+        for new_i, [old_i, _] in enumerate(path_i_and_counts):
+            old_path_i_to_new[old_i] = new_i
+        for new_i, [old_i, _] in enumerate(title_i_and_counts):
+            old_title_i_to_new[old_i] = new_i
+
+        for entry in self._entries:
+            for window in entry.windows:
+                window.path_i = old_path_i_to_new[window.path_i]
+                window.title_i = old_title_i_to_new[window.title_i]
+
+        paths = self._path_cd.generate_values_list()
+        titles = self._title_cd.generate_values_list()
+
+        self._path_cd = Dictionary([paths[i] for [i, _] in path_i_and_counts])
+        self._title_cd = Dictionary([titles[i] for [i, _] in title_i_and_counts])
+
+        self._optimized = True
+
+    def serialize(self, optimize=True) -> ConsolidatedOwlLogsSerialized:
+        """Generate JSON-serializable dictionary.
+
+        Parameters
+        ----------
+        optimize : bool, optional
+            Optimize :class:`Consolidator` before
+            serializing, by default True.
+
+        Returns
+        -------
+        ConsolidatedOwlLogsSerialized
+            Serialized consolidated owl logs.
+        """
+        if optimize:
+            self.optimize()
+
         obj: ConsolidatedOwlLogsSerialized = {
             "version": ".".join(map(str, VERSION)),
             "dictionaries": [],
@@ -152,6 +215,8 @@ class Consolidator:
                 )
             )
 
+        self._optimized = False
+
 
 class _WindowView(Window):
     _window: _Window
@@ -208,11 +273,11 @@ class _Window:
     only to be used in :class:`Consolidator`.
     """
 
-    _path_i: int
-    _title_i: int
-    _is_active: bool
+    path_i: int
+    title_i: int
+    is_active: bool
 
-    __slots__ = ("_path_i", "_title_i", "_is_active")
+    __slots__ = ("path_i", "title_i", "is_active")
 
     def __init__(self, path_i: int, title_i: int, is_active=False):
         """
@@ -225,9 +290,9 @@ class _Window:
         is_active : bool, optional
             True if the user is active in the window, by default False
         """
-        self._path_i = path_i
-        self._title_i = title_i
-        self._is_active = is_active
+        self.path_i = path_i
+        self.title_i = title_i
+        self.is_active = is_active
 
     @classmethod
     def from_window_data(
@@ -260,23 +325,6 @@ class _Window:
             is_active = window["isActive"]
 
         return cls(path_i, title_i, bool(is_active))
-
-    @property
-    def path_i(self):
-        """Window path dictionary index"""
-        return self._path_i
-
-    @property
-    def title_i(self):
-        """Window title dictionary index"""
-        return self._title_i
-
-    @property
-    def is_active(self):
-        """True if user is active in the window,
-        False otherwise
-        """
-        return self._is_active
 
 
 class _Entry:
