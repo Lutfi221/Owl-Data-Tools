@@ -1,5 +1,5 @@
 class OwlError(Exception):
-    """Base class for owl data processor exceptions."""
+    """Base class for Owl Data Tools exceptions."""
 
     _msg: str
 

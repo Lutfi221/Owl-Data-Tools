@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.abspath("../../"))
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "Owl Data Processor"
+project = "Owl Data Tools"
 copyright = "2023, Lutfi Azis"
 author = "Lutfi Azis"
 

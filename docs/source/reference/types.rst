@@ -1,5 +1,5 @@
 types
 =====
 
-.. automodule:: owl_data_processor.types
+.. automodule:: owl_data_tools.types
     :members:

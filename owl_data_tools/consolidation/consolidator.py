@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Optional, Sequence, TypedDict
 from ..exceptions import OwlError
 
-from owl_data_processor.types import Window
+from owl_data_tools.types import Window
 from ..utils import find_first
 from ..version import VERSION
 
